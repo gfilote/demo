@@ -21,6 +21,7 @@
     </cxf:bus>
 
     <bean id="accountService" class="server.service.AccountService" init-method="init"></bean>
+    <bean id="companyService" class="server.service.CompanyService"></bean>
     <bean id="jsonProvider"
           class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
     <bean id="clientExceptionMapper" class="server.exceptions.ClientExceptionMapper" />
@@ -30,6 +31,7 @@
     <jaxrs:server id="accountrs" address="/rservice">
         <jaxrs:serviceBeans>
             <ref bean="accountService"/>
+            <ref bean="companyService"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean='jsonProvider' />
@@ -38,5 +40,4 @@
             <ref bean='throwableMapper' />
         </jaxrs:providers>
     </jaxrs:server>
-
 </beans>

@@ -1,22 +1,14 @@
+import entity.CompanyDetails;
 import entity.UserDetails;
 import junit.framework.TestCase;
-
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
+import server.util.HibernateUtil;
 
 
 public class AppTest extends TestCase {
 
     public void testApp() {
-        Configuration configuration = new Configuration();
-        configuration.configure();
-        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(
-                configuration.getProperties()).build();
-        SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-        Session session = sessionFactory.openSession();
+        Session session = HibernateUtil.getSession();
         session.beginTransaction();
 
         UserDetails user;
@@ -24,6 +16,13 @@ public class AppTest extends TestCase {
             user = new UserDetails();
             user.setUserName("User " + i);
             session.save(user);
+        }
+
+        CompanyDetails company;
+        for (int i = 1; i < 5; i++) {
+            company = new CompanyDetails("Company " + i);
+            company.setCompanyName("Company " + i);
+            session.save(company);
         }
 
         session.getTransaction().commit();
