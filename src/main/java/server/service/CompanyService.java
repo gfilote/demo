@@ -15,20 +15,6 @@ import java.util.List;
 public class CompanyService {
 
     @GET
-    @Path("/{id}")
-    public CompanyDetails getCompanyDetails(@PathParam("id") int id) {
-        Session session = HibernateUtil.getSession();
-        session.beginTransaction();
-
-        CompanyDetails company = (CompanyDetails) session.get(CompanyDetails.class, id);
-
-        session.getTransaction().commit();
-        session.close();
-
-        return company;
-    }
-
-    @GET
     public List<CompanyDetails> getCompanyDetails() {
         Session session = HibernateUtil.getSession();
         session.beginTransaction();
@@ -53,9 +39,25 @@ public class CompanyService {
         return company;
     }
 
+    @GET
+    @Path("/{id}")
+    public CompanyDetails getCompanyDetails(@PathParam("id") String id) {
+        Session session = HibernateUtil.getSession();
+        session.beginTransaction();
+
+        CompanyDetails company = (CompanyDetails) session.get(CompanyDetails.class, id);
+
+        session.getTransaction().commit();
+        session.close();
+
+        return company;
+    }
+
+
+
     @PUT
     @Path("/{id}")
-    public CompanyDetails addCompanyDetails(@PathParam("id") int id, CompanyDetails company) {
+    public CompanyDetails addCompanyDetails(@PathParam("id") String id, CompanyDetails company) {
         Session session = HibernateUtil.getSession();
         session.beginTransaction();
 
@@ -70,7 +72,7 @@ public class CompanyService {
 
     @DELETE
     @Path("/{id}")
-    public void deleteCompany(@PathParam("id") int id) {
+    public void deleteCompany(@PathParam("id") String id) {
         Session session = HibernateUtil.getSession();
         session.beginTransaction();
 
