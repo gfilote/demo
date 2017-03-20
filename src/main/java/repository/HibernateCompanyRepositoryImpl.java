@@ -1,76 +1,51 @@
 package repository;
 
 import model.Company;
-import org.hibernate.Session;
-import util.HibernateUtil;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import javax.annotation.Resource;
 import java.util.List;
 
+@Component
 public class HibernateCompanyRepositoryImpl implements CompanyRepository {
-    Session session = null;
+    @Resource
+    private SessionFactory sessionFactory;
 
     @Override
     public List findAll() throws Exception {
-        session = HibernateUtil.getSession();
-        session.beginTransaction();
-        List companyList = session.createCriteria(Company.class)
-                .list();
-        session.getTransaction().commit();
-        session.close();
-        return companyList;
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Company.class);
+        return criteria.list();
     }
 
     @Override
     public Company addCompany(Company company) throws Exception {
-        session = HibernateUtil.getSession();
-        session.beginTransaction();
-
-        company.setCreatedDate(new Date());
-        session.save(company);
-
-        session.getTransaction().commit();
-        session.close();
-
+        sessionFactory.getCurrentSession().save(company);
         return company;
     }
 
     @Override
     public Company getCompanyById(String uuid) throws Exception {
-        session = HibernateUtil.getSession();
-        session.beginTransaction();
-        Company company = (Company) session.get(Company.class,
-                uuid);
-        session.getTransaction().commit();
-        session.close();
-        return company;
+        return (Company) sessionFactory.getCurrentSession().get(Company.class, uuid);
     }
 
     @Override
     public Company updateCompany(String uuid, Company company) throws Exception {
-        session = HibernateUtil.getSession();
-        session.beginTransaction();
-        Company repositoryCompany = (Company) session.get(Company.class,
-                uuid);
-        repositoryCompany.setCompanyName(company.getCompanyName());
-        session.update(repositoryCompany);
 
-        session.getTransaction().commit();
-        session.close();
+        Company repositoryCompany = (Company) sessionFactory.getCurrentSession().get(Company.class, uuid);
+        repositoryCompany.setCompanyName(company.getCompanyName());
+        sessionFactory.getCurrentSession().update(repositoryCompany);
+
         return repositoryCompany;
     }
 
     @Override
-    public boolean deleteCompany(String uuid)
-            throws Exception {
-        session = HibernateUtil.getSession();
-        session.beginTransaction();
+    public boolean deleteCompany(String uuid) throws Exception {
 
-        Company company = (Company) session.get(Company.class, uuid);
-        session.delete(company);
+        Company company = (Company) sessionFactory.getCurrentSession().get(Company.class, uuid);
+        sessionFactory.getCurrentSession().delete(company);
 
-        session.getTransaction().commit();
-        session.close();
         return false;
     }
 }

@@ -13,6 +13,7 @@
 
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+    <import resource="classpath:applicationContext.xml"/>
 
     <cxf:bus>
         <cxf:features>

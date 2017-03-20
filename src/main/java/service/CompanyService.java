@@ -1,23 +1,30 @@
 package service;
 
-import manager.CompanyManager;
-import model.Company;
+import api.CompanyAPI;
+import dto.CompanyDTO;
+import util.Adapter;
+import view.CompanyView;
 
+import javax.annotation.Resource;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
 import java.util.List;
 
 @Path("/companies")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class CompanyService {
-    CompanyManager companyManager = new CompanyManager();
+    @Resource
+    private CompanyAPI companyAPI;
 
     @GET
-    public List<Company> getCompanies() {
-        List<Company> companies = null;
+    public List<CompanyView> getCompanies() {
+        List<CompanyView> companies = new ArrayList<>();
         try {
-            return companyManager.findAll();
+            List<CompanyDTO> companiesDTO = companyAPI.findAll();
+            companiesDTO.forEach(company -> companies.add(Adapter.convertToView(company)));
+            return companies;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -25,10 +32,10 @@ public class CompanyService {
     }
 
     @POST
-    public Company addCompany(Company company) {
-        Company newCompany = null;
+    public CompanyView addCompany(CompanyView company) {
+        CompanyView newCompany = null;
         try {
-            newCompany = companyManager.addCompany(company);
+            companyAPI.addCompany(Adapter.convertToDto(company));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -37,10 +44,10 @@ public class CompanyService {
 
     @GET
     @Path("/{id}")
-    public Company getCompany(@PathParam("id") String uuid) {
-        Company company = null;
+    public CompanyView getCompany(@PathParam("id") String uuid) {
+        CompanyView company = null;
         try {
-            company = companyManager.getCompanyById(uuid);
+            company = Adapter.convertToView(companyAPI.getCompanyById(uuid));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -49,10 +56,11 @@ public class CompanyService {
 
     @PUT
     @Path("/{id}")
-    public Company updateCompany(@PathParam("id") String uuid, Company company) {
-        Company updatedCompany = null;
+    public CompanyView updateCompany(@PathParam("id") String uuid, CompanyView company) {
+        CompanyView updatedCompany = null;
         try {
-            return companyManager.updateCompany(uuid, company);
+            CompanyDTO newCompany = companyAPI.updateCompany(uuid, Adapter.convertToDto(company));
+            return Adapter.convertToView(newCompany);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -62,9 +70,8 @@ public class CompanyService {
     @DELETE
     @Path("/{id}")
     public void deleteCompany(@PathParam("id") String uuid) {
-
         try {
-            companyManager.deleteCompany(uuid);
+            companyAPI.deleteCompany(uuid);
         } catch (Exception e) {
             e.printStackTrace();
         }
