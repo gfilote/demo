@@ -20,17 +20,15 @@
         </cxf:features>
     </cxf:bus>
 
-    <bean id="accountService" class="server.service.AccountService" init-method="init"></bean>
-    <bean id="companyService" class="server.service.CompanyService"></bean>
+    <bean id="companyService" class="service.CompanyService"></bean>
     <bean id="jsonProvider"
           class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
-    <bean id="clientExceptionMapper" class="server.exceptions.ClientExceptionMapper" />
-    <bean id="serverExceptionMapper" class="server.exceptions.ServerExceptionMapper" />
-    <bean id="throwableMapper" class="server.exceptions.ThrowableMapper" />
+    <bean id="clientExceptionMapper" class="exceptions.ClientExceptionMapper" />
+    <bean id="serverExceptionMapper" class="exceptions.ServerExceptionMapper" />
+    <bean id="throwableMapper" class="exceptions.ThrowableMapper" />
 
-    <jaxrs:server id="accountrs" address="/rservice">
+    <jaxrs:server id="companyrs" address="/rservice">
         <jaxrs:serviceBeans>
-            <ref bean="accountService"/>
             <ref bean="companyService"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>

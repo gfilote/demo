@@ -1,4 +1,4 @@
-package server.exceptions;
+package exceptions;
 
 import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.core.Response;

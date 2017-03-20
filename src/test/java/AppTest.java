@@ -1,8 +1,8 @@
-import entity.CompanyDetails;
-import entity.UserDetails;
+import model.Company;
+import model.UserDetails;
 import junit.framework.TestCase;
 import org.hibernate.Session;
-import server.util.HibernateUtil;
+import util.HibernateUtil;
 
 
 public class AppTest extends TestCase {
@@ -18,10 +18,9 @@ public class AppTest extends TestCase {
             session.save(user);
         }
 
-        CompanyDetails company;
+        Company company;
         for (int i = 1; i < 5; i++) {
-            company = new CompanyDetails("Company " + i);
-            company.setCompanyName("Company " + i);
+            company = new Company("Company " + i);
             session.save(company);
         }
 
