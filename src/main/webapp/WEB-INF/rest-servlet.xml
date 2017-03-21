@@ -22,6 +22,7 @@
     </cxf:bus>
 
     <bean id="companyService" class="service.CompanyService"></bean>
+    <bean id="internshipService" class="service.InternshipService"></bean>
     <bean id="jsonProvider"
           class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
     <bean id="clientExceptionMapper" class="exceptions.ClientExceptionMapper" />
@@ -31,6 +32,7 @@
     <jaxrs:server id="companyrs" address="/rservice">
         <jaxrs:serviceBeans>
             <ref bean="companyService"/>
+            <ref bean="internshipService"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean='jsonProvider' />

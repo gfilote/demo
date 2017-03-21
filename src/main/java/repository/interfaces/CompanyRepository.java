@@ -1,4 +1,4 @@
-package repository;
+package repository.interfaces;
 
 import model.Company;
 
@@ -14,6 +14,5 @@ public interface CompanyRepository {
 
     public Company updateCompany(String id, Company company) throws Exception;
 
-    public boolean deleteCompany
-            (String id) throws Exception;
+    public void deleteCompany (String id) throws Exception;
 }

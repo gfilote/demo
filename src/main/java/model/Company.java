@@ -3,10 +3,9 @@ package model;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 @Entity(name = "company")
@@ -21,6 +20,9 @@ public class Company {
     private String companyName;
     @Column(name = "created_date")
     private Date createdDate;
+    @OneToMany(mappedBy = "company")
+    private Collection<Internship> internships = new ArrayList<>();
+
 
     public Company() {
         this.createdDate = new Date();
@@ -55,4 +57,11 @@ public class Company {
         this.uuid = uuid;
     }
 
+    public Collection<Internship> getInternships() {
+        return internships;
+    }
+
+    public void setInternships(Collection<Internship> internships) {
+        this.internships = internships;
+    }
 }

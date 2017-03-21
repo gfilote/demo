@@ -7,7 +7,10 @@ import view.CompanyView;
 
 import javax.annotation.Resource;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,62 +22,83 @@ public class CompanyService {
     private CompanyAPI companyAPI;
 
     @GET
-    public List<CompanyView> getCompanies() {
-        List<CompanyView> companies = new ArrayList<>();
+    public List<CompanyView> getCompanies(@Context UriInfo uriInfo) {
+        List<CompanyView> companyViews = new ArrayList<>();
         try {
-            List<CompanyDTO> companiesDTO = companyAPI.findAll();
-            companiesDTO.forEach(company -> companies.add(Adapter.convertToView(company)));
-            return companies;
+            List<CompanyDTO> companyDTOS = companyAPI.findAll();
+            companyDTOS.forEach(companyDTO -> {
+                CompanyView companyView = Adapter.convertToView(companyDTO);
+                companyView.addLink(getUriForSelf(uriInfo, companyView), "self");
+                companyViews.add(companyView);
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return companies;
+        return companyViews;
     }
 
     @POST
-    public CompanyView addCompany(CompanyView company) {
-        CompanyView newCompany = null;
+    public CompanyView addCompany(CompanyView companyView) {
         try {
-            companyAPI.addCompany(Adapter.convertToDto(company));
+            companyView = Adapter.convertToView(companyAPI.addCompany(Adapter.convertToDto(companyView)));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return newCompany;
+        return companyView;
     }
 
     @GET
-    @Path("/{id}")
-    public CompanyView getCompany(@PathParam("id") String uuid) {
-        CompanyView company = null;
+    @Path("/{companyUuid}")
+    public CompanyView getCompany(@PathParam("companyUuid") String companyUuid, @Context UriInfo uriInfo) {
+        CompanyView companyView = null;
         try {
-            company = Adapter.convertToView(companyAPI.getCompanyById(uuid));
+            companyView = Adapter.convertToView(companyAPI.getCompanyById(companyUuid));
+            companyView.addLink(getUriForSelf(uriInfo, companyView), "self");
+            companyView.addLink(getUriForInternships(uriInfo, companyView), "internships");
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return company;
+        return companyView;
     }
 
     @PUT
-    @Path("/{id}")
-    public CompanyView updateCompany(@PathParam("id") String uuid, CompanyView company) {
-        CompanyView updatedCompany = null;
+    @Path("/{companyUuid}")
+    public CompanyView updateCompany(@PathParam("companyUuid") String companyUuid, CompanyView companyView) {
         try {
-            CompanyDTO newCompany = companyAPI.updateCompany(uuid, Adapter.convertToDto(company));
-            return Adapter.convertToView(newCompany);
+            CompanyDTO companyDTO = companyAPI.updateCompany(companyUuid, Adapter.convertToDto(companyView));
+            companyView = Adapter.convertToView(companyDTO);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return updatedCompany;
+        return companyView;
     }
 
     @DELETE
-    @Path("/{id}")
-    public void deleteCompany(@PathParam("id") String uuid) {
+    @Path("/{companyUuid}")
+    public void deleteCompany(@PathParam("companyUuid") String companyUuid) {
         try {
-            companyAPI.deleteCompany(uuid);
+            companyAPI.deleteCompany(companyUuid);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    private String getUriForSelf(UriInfo uriInfo, CompanyView companyView) {
+        String uri = uriInfo.getBaseUriBuilder()
+                .path(CompanyService.class)
+                .path(companyView.getUuid())
+                .build()
+                .toString();
+        return uri;
+    }
+
+    private String getUriForInternships(UriInfo uriInfo, CompanyView companyView) {
+        URI uri = uriInfo.getBaseUriBuilder()
+                .path(InternshipService.class)
+                .resolveTemplate("companyUuid", companyView.getUuid())
+                .build();
+        return uri.toString();
+    }
+
 }
 

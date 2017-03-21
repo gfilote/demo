@@ -4,6 +4,7 @@ import model.Company;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
+import repository.interfaces.CompanyRepository;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -32,20 +33,15 @@ public class HibernateCompanyRepositoryImpl implements CompanyRepository {
 
     @Override
     public Company updateCompany(String uuid, Company company) throws Exception {
-
-        Company repositoryCompany = (Company) sessionFactory.getCurrentSession().get(Company.class, uuid);
-        repositoryCompany.setCompanyName(company.getCompanyName());
-        sessionFactory.getCurrentSession().update(repositoryCompany);
-
-        return repositoryCompany;
+        Company dbCompany = (Company) sessionFactory.getCurrentSession().get(Company.class, uuid);
+        dbCompany.setCompanyName(company.getCompanyName());
+        sessionFactory.getCurrentSession().update(dbCompany);
+        return dbCompany;
     }
 
     @Override
-    public boolean deleteCompany(String uuid) throws Exception {
-
+    public void deleteCompany(String uuid) throws Exception {
         Company company = (Company) sessionFactory.getCurrentSession().get(Company.class, uuid);
         sessionFactory.getCurrentSession().delete(company);
-
-        return false;
     }
 }

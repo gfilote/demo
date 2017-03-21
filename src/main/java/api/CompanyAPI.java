@@ -3,7 +3,7 @@ package api;
 import dto.CompanyDTO;
 import model.Company;
 import org.springframework.stereotype.Service;
-import repository.CompanyRepository;
+import repository.interfaces.CompanyRepository;
 import util.Adapter;
 
 import javax.annotation.Resource;
@@ -24,9 +24,9 @@ public class CompanyAPI {
         return companiesDTO;
     }
 
-    public CompanyDTO addCompany(CompanyDTO company) throws Exception {
-        Company newCompany = companyRepository.addCompany(Adapter.convertToEntity(company));
-        return Adapter.convertToDto(newCompany);
+    public CompanyDTO addCompany(CompanyDTO companyDTO) throws Exception {
+        Company company = companyRepository.addCompany(Adapter.convertToEntity(companyDTO));
+        return Adapter.convertToDto(company);
     }
 
     public CompanyDTO getCompanyById(String uuid) throws Exception {
@@ -34,15 +34,13 @@ public class CompanyAPI {
         return Adapter.convertToDto(company);
     }
 
-    public CompanyDTO updateCompany(String uuid, CompanyDTO company) throws Exception {
-        Company newCompany = companyRepository.updateCompany(uuid, Adapter.convertToEntity(company));
-        return Adapter.convertToDto(newCompany);
+    public CompanyDTO updateCompany(String uuid, CompanyDTO companyDTO) throws Exception {
+        Company company = companyRepository.updateCompany(uuid, Adapter.convertToEntity(companyDTO));
+        return Adapter.convertToDto(company);
     }
 
-    public boolean deleteCompany(String uuid)
-            throws Exception {
+    public void deleteCompany(String uuid) throws Exception {
         companyRepository.deleteCompany(uuid);
-        return false;
     }
 
 }
